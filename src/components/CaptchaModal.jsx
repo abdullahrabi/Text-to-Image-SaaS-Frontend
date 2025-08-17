@@ -12,7 +12,7 @@ const CaptchaModal = ({ onVerify, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md bg-black/40">
-      <div className="bg-transparent p-6 rounded-2xl shadow-lg w-[90%] max-w-md text-center">
+      <div className="bg-transparent p-6 rounded-2xl  max-w-md text-center">
        
         
         <Turnstile
