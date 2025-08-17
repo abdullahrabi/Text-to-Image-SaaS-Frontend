@@ -13,13 +13,11 @@ const Generatebtn = () => {
     if (user) {
       navigate('/result');
     } else {
-      setShowCaptcha
-      setShowLogin(true);
+      showCaptcha(true)
+      
     }
   };
-   const handleLoginClick = () => {
-    setShowCaptcha(true); // show captcha first
-  };
+  
 
   const handleCaptchaSuccess = (token) => {
     console.log("Captcha success ✅ Token:", token);
@@ -49,15 +47,16 @@ const Generatebtn = () => {
         Generate Images
         <img className='h-6' src={assets.star_group} alt='' />
       </motion.button>
-    </motion.div>
-    
-  );
-   {showCaptcha && (
+      {showCaptcha && (
         <CaptchaModal
           onVerify={handleCaptchaSuccess}
           onClose={() => setShowCaptcha(false)}
         />
       )}
+    </motion.div>
+    
+  );
+   
 };
 
 export default Generatebtn;
