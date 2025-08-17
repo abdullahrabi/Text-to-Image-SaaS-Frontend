@@ -16,7 +16,7 @@ const CaptchaModal = ({ onVerify, onClose }) => {
         <h2 className="text-lg font-semibold mb-4">Verify Captcha</h2>
         
         <Turnstile
-          sitekey={import.meta.env.CLOUDFLARE__SITE_KEY}
+          sitekey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
           onVerify={(token) => {
             onVerify(token);
             onClose(); // close modal after success
