@@ -16,7 +16,13 @@
          data-callback="onCaptchaSuccess">
     </div>
 
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+     <script>
+      // CAPTCHA Success Handler
+      function onCaptchaSuccess(token) {
+        // Hide CAPTCHA and show React app
+        document.getElementById('captcha-container').style.display = 'none';
+        document.getElementById('root').style.display = 'block';
+      }
+    </script>
   </body>
 </html>
