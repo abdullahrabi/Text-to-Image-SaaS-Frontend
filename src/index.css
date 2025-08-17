@@ -10,7 +10,7 @@ body.captcha-active {
   margin: 0;
   padding: 0;
   height: 100vh;
-  background-color: #000; /* Black background only for captcha */
+  background-color: #28282B; /* Black background only for captcha */
   display: flex;
   justify-content: center;
   align-items: center;
