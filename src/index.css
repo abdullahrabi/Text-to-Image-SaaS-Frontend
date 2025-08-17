@@ -1,6 +1,24 @@
 @import "tailwindcss";
-.placeholder-color{
-    color:#e0e0e0;
-    font-weight: 300;
 
+.placeholder-color {
+  color: #e0e0e0;
+  font-weight: 300;
+}
+
+/* Only captcha page black */
+body.captcha-active {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  background-color: #000; /* Black background only for captcha */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Center captcha widget */
+#captcha-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

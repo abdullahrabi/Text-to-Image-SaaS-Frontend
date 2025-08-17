@@ -1,19 +1,27 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { assets } from '../assets/assets';
 import { motion } from 'motion/react';
 import { AppContext } from '../context/AppContext';
 import { useNavigate } from 'react-router-dom';
+import CaptchaModal from "./CaptchaModal"; // ✅ import captcha
 
 const Header = () => {
   const { user, setShowLogin } = useContext(AppContext);
+  const [showCaptcha, setShowCaptcha] = useState(false); // ✅ captcha state
   const navigate = useNavigate();
 
   const onClickHandler = () => {
     if (user) {
       navigate('/result');
     } else {
-      setShowLogin(true);
+      setShowCaptcha(true); // ✅ show captcha if not logged in
     }
+  };
+
+  const handleCaptchaSuccess = (token) => {
+    console.log("Captcha success ✅ Token:", token);
+    // After captcha solved, open login/signup modal
+    setShowLogin(true);
   };
 
   return (
@@ -78,6 +86,14 @@ const Header = () => {
         Generate Images
         <img className='h-6' src={assets.star_group} alt='' />
       </motion.button>
+
+      {/* ✅ Captcha Modal */}
+      {showCaptcha && (
+        <CaptchaModal
+          onVerify={handleCaptchaSuccess}
+          onClose={() => setShowCaptcha(false)}
+        />
+      )}
 
       {/* Sample images */}
       <motion.div

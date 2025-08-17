@@ -8,12 +8,13 @@
     <!-- Cloudflare Turnstile Script -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   </head>
-  <body>
+  <body class="captcha-active">
     <!-- Captcha container -->
     <div id="captcha-container"
          class="cf-turnstile"
-       data-sitekey="%VITE_TURNSTILE_SITE_KEY%"
-         data-callback="onCaptchaSuccess">
+         data-sitekey="%VITE_TURNSTILE_SITE_KEY%"
+         data-callback="onCaptchaSuccess"
+         data-theme="dark">
     </div>
 
     <!-- React root (hidden until captcha solved) -->
@@ -27,6 +28,9 @@
         // Hide CAPTCHA and show React app
         document.getElementById('captcha-container').style.display = 'none';
         document.getElementById('root').style.display = 'block';
+
+        // Remove black background once captcha is done
+        document.body.classList.remove("captcha-active");
       }
     </script>
   </body>
