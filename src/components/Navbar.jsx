@@ -9,19 +9,12 @@ const Navbar = () => {
   const { user, setShowLogin, logout, credit } = useContext(AppContext);
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [showCaptcha, setShowCaptcha] = useState(false);
+  
 
   const toggleDropdown = () => setDropdownOpen((prev) => !prev);
 
-  const handleLoginClick = () => {
-    setShowCaptcha(true); // show captcha first
-  };
 
-  const handleCaptchaSuccess = (token) => {
-    console.log("Captcha success ✅ Token:", token);
-    // Now show login modal (or signup) after captcha solved
-    setShowLogin(true);
-  };
+  
 
   return (
     <div className="flex items-center justify-between py-4">
@@ -83,12 +76,7 @@ const Navbar = () => {
         )}
       </div>
 
-      {showCaptcha && (
-        <CaptchaModal
-          onVerify={handleCaptchaSuccess}
-          onClose={() => setShowCaptcha(false)}
-        />
-      )}
+    
     </div>
   );
 };
