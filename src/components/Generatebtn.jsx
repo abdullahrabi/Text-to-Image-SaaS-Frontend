@@ -1,9 +1,10 @@
-import React, { useContext ,useState} from 'react';
+import React, { useContext, useState } from 'react';
 import { assets } from '../assets/assets';
 import { motion } from 'motion/react';
 import { AppContext } from '../context/AppContext';
 import { useNavigate } from 'react-router-dom';
 import CaptchaModal from "./CaptchaModal";
+
 const Generatebtn = () => {
   const { user, setShowLogin } = useContext(AppContext);
   const [showCaptcha, setShowCaptcha] = useState(false);
@@ -13,18 +14,15 @@ const Generatebtn = () => {
     if (user) {
       navigate('/result');
     } else {
-      showCaptcha(true)
-      
+      setShowCaptcha(true); // ✅ fixed
     }
   };
-  
 
   const handleCaptchaSuccess = (token) => {
     console.log("Captcha success ✅ Token:", token);
-    // Now show login modal (or signup) after captcha solved
+    // Show login modal (or signup) after captcha solved
     setShowLogin(true);
   };
-
 
   return (
     <motion.div
@@ -47,6 +45,7 @@ const Generatebtn = () => {
         Generate Images
         <img className='h-6' src={assets.star_group} alt='' />
       </motion.button>
+
       {showCaptcha && (
         <CaptchaModal
           onVerify={handleCaptchaSuccess}
@@ -54,9 +53,7 @@ const Generatebtn = () => {
         />
       )}
     </motion.div>
-    
   );
-   
 };
 
 export default Generatebtn;
