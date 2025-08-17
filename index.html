@@ -10,13 +10,18 @@
   </head>
   <body>
     <!-- Captcha container -->
-    <div id="captcha-container" 
-         class="cf-turnstile" 
-         data-sitekey="%VITE_TURNSTILE_SITE_KEY%"
+    <div id="captcha-container"
+         class="cf-turnstile"
+         data-sitekey="__TURNSTILE_SITE_KEY__"
          data-callback="onCaptchaSuccess">
     </div>
 
-     <script>
+    <!-- React root (hidden until captcha solved) -->
+    <div id="root" style="display:none;"></div>
+
+    <script type="module" src="/src/main.jsx"></script>
+
+    <script>
       // CAPTCHA Success Handler
       function onCaptchaSuccess(token) {
         // Hide CAPTCHA and show React app
