@@ -9,13 +9,13 @@ const AppContextProvider = (props) => {
   const [user, setUser] = useState(null);
   const [showLogin, setShowLogin] = useState(false);
   const [token, setToken] = useState(localStorage.getItem('token') || '');
-  const [credit, setCredit] = useState(0);
+  const [credit, setCredit] = useState(0); // Use number for predictable behavior
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const navigate = useNavigate();
 
   // Fetch user and credit info
   const loadCreditsData = async () => {
-    if (!token) return null;
+    if (!token) return;
 
     try {
       const { data } = await axios.get(`${backendUrl}/api/user/credits`, {
@@ -25,15 +25,13 @@ const AppContextProvider = (props) => {
       if (data.success) {
         setCredit(data.credits);
         setUser(data.user);
-        return data.credits; // Return updated credit value
+        return data.credits;
       } else {
         toast.error(data.message + ' 😢');
-        return null;
       }
     } catch (error) {
       console.error(error);
       toast.error(error.message + ' 😢');
-      return null;
     }
   };
 
@@ -64,20 +62,18 @@ const AppContextProvider = (props) => {
       );
 
       if (data.success) {
-        const updatedCredits = await loadCreditsData(); // Update credits immediately
+        await loadCreditsData(); // Update credits immediately
         toast.success('Image Generated Successfully! 😊');
-        return { image: data.image, credit: updatedCredits }; // Return image and updated credit
+        return data.image; // Return the generated image URL
       } else {
         toast.error(data.message + ' 😢');
-        const updatedCredits = await loadCreditsData();
-        if (updatedCredits === 0) {
+        await loadCreditsData(); // Ensure credit updates even on error
+        if (data.creditBalance === 0) {
           navigate('/buy');
         }
-        return { image: null, credit: updatedCredits };
       }
     } catch (error) {
       toast.error(error.message + ' 😢');
-      return { image: null, credit };
     }
   };
 
