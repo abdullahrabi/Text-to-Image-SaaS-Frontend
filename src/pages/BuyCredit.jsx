@@ -1,53 +1,53 @@
-import React, { useContext, useState } from 'react'
-import { assets, plans } from '../assets/assets'
-import { AppContext } from '../context/AppContext'
-import { motion } from 'motion/react'
-import { useNavigate } from 'react-router-dom'
-import { toast } from 'react-toastify'
-import axios from 'axios'
-import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js'
+import React, { useContext, useState } from 'react';
+import { assets, plans } from '../assets/assets';
+import { AppContext } from '../context/AppContext';
+import { motion } from 'motion/react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import axios from 'axios';
+import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 
 const BuyCredit = () => {
-  const { user, backendUrl, token, setShowLogin, loadCreditsData  } = useContext(AppContext)
-  const stripe = useStripe()
-  const elements = useElements()
-  const navigate = useNavigate()
+  const { user, backendUrl, token, setShowLogin, loadCreditsData } = useContext(AppContext);
+  const stripe = useStripe();
+  const elements = useElements();
+  const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const paymentStripe = async (planId) => {
     try {
       if (!user) {
-        setShowLogin(true)
-        return
+        setShowLogin(true);
+        return;
       }
 
-      setLoading(true)
+      setLoading(true);
 
       // Step 1: Create PaymentIntent via backend
       const { data } = await axios.post(
-        backendUrl + '/api/user/pay-stripe',
+        `${backendUrl}/api/user/pay-stripe`,
         { planId },
-        { headers: { token: token } }
-      )
+        { headers: { token } }
+      );
 
       if (!data.success) {
-        toast.error(data.message)
-        setLoading(false)
-        return
+        toast.error(data.message);
+        setLoading(false);
+        return;
       }
 
-      const clientSecret = data.clientSecret
-      const cardElement = elements.getElement(CardElement)
+      const clientSecret = data.clientSecret;
+      const cardElement = elements.getElement(CardElement);
 
       if (!cardElement) {
-        toast.error("Card details not entered")
-        setLoading(false)
-        return
+        toast.error("Card details not entered");
+        setLoading(false);
+        return;
       }
 
       // Step 2: Confirm payment with Stripe
-      const result = await stripe.confirmCardPayment(clientSecret, {
+      const paymentResult = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           card: cardElement,
           billing_details: {
@@ -55,25 +55,23 @@ const BuyCredit = () => {
             email: user?.email || "test@example.com",
           },
         },
-      })
+      });
 
-      if (result.error) {
-        toast.error(result.error.message)
-      } else if (result.paymentIntent.status === 'succeeded') {
-        await loadCreditsData();
-       // Navigate AFTER state is guaranteed to update
-     setTimeout(() => {
-        navigate('/');
-      }, 100); // Small delay ensures credit is updated
-        
-      toast.success("Payment successful and Credit Added 🎉")
+      if (paymentResult.error) {
+        toast.error(paymentResult.error.message);
+      } else if (paymentResult.paymentIntent.status === 'succeeded') {
+        const updatedCredits = await loadCreditsData(); // Fetch latest credits
+        if (updatedCredits !== null) {
+          toast.success(`Payment successful! Credits: ${updatedCredits} 🎉`);
+          navigate('/');
+        }
       }
     } catch (error) {
-      toast.error(error.message)
+      toast.error(error.message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <motion.div
@@ -86,7 +84,7 @@ const BuyCredit = () => {
       <button className="border border-gray-400 px-10 py-2 rounded-full mb-6">
         Our Plans
       </button>
-      <h1 className="text-center text-3xl font-medium mb-6 sm:mb-10 ">
+      <h1 className="text-center text-3xl font-medium mb-6 sm:mb-10">
         Choose the plan
       </h1>
 
@@ -119,7 +117,7 @@ const BuyCredit = () => {
         ))}
       </div>
     </motion.div>
-  )
-}
+  );
+};
 
-export default BuyCredit
+export default BuyCredit;
