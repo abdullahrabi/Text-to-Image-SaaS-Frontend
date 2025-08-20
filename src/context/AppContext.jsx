@@ -25,7 +25,7 @@ const AppContextProvider = (props) => {
       if (data.success) {
         setCredit(data.credits);
         setUser(data.user);
-        return data.credits;
+        
       } else {
         toast.error(data.message + ' 😢');
       }

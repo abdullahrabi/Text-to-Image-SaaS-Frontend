@@ -8,27 +8,41 @@ import axios from 'axios'
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js'
 
 const BuyCredit = () => {
-  const { user, backendUrl, token, setShowLogin, loadCreditsData  } = useContext(AppContext)
+  const { user, backendUrl, token, setShowLogin, credit, setCredit } = useContext(AppContext)
   const stripe = useStripe()
   const elements = useElements()
   const navigate = useNavigate()
-
   const [loading, setLoading] = useState(false)
 
-  const paymentStripe = async (planId) => {
+  const fetchLatestCredits = async () => {
     try {
-      if (!user) {
-        setShowLogin(true)
-        return
+      const { data } = await axios.get(`${backendUrl}/api/user/credits`, { headers: { token } })
+      if (data.success) {
+        setCredit(data.credits)
+        return data.credits
       }
+      return credit
+    } catch (err) {
+      console.error('Error fetching credits:', err)
+      return credit
+    }
+  }
 
-      setLoading(true)
+  const paymentStripe = async (planId, planCredits) => {
+    if (!user) {
+      setShowLogin(true)
+      return
+    }
 
-      // Step 1: Create PaymentIntent via backend
+    setLoading(true)
+    const oldCredits = credit
+
+    try {
+      // Step 1: Create PaymentIntent
       const { data } = await axios.post(
-        backendUrl + '/api/user/pay-stripe',
+        `${backendUrl}/api/user/pay-stripe`,
         { planId },
-        { headers: { token: token } }
+        { headers: { token } }
       )
 
       if (!data.success) {
@@ -39,14 +53,13 @@ const BuyCredit = () => {
 
       const clientSecret = data.clientSecret
       const cardElement = elements.getElement(CardElement)
-
       if (!cardElement) {
         toast.error("Card details not entered")
         setLoading(false)
         return
       }
 
-      // Step 2: Confirm payment with Stripe
+      // Step 2: Confirm payment
       const result = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           card: cardElement,
@@ -60,11 +73,19 @@ const BuyCredit = () => {
       if (result.error) {
         toast.error(result.error.message)
       } else if (result.paymentIntent.status === 'succeeded') {
-        const updatedCredits = await loadCreditsData();
-       if (updatedCredits !== null) {
-          toast.success("Payment successful and Credit Added 🎉");
-          navigate('/');
-       }}
+        // Optimized polling: check every 1s, stop as soon as credits are updated
+        let attempts = 0
+        const interval = setInterval(async () => {
+          attempts++
+          const latestCredits = await fetchLatestCredits()
+          if (latestCredits > oldCredits || attempts >= 10) {
+            clearInterval(interval)
+            toast.success("Payment successful and Credit Added 🎉")
+            navigate('/')
+          }
+        }, 1000)
+      }
+
     } catch (error) {
       toast.error(error.message)
     } finally {
@@ -87,7 +108,6 @@ const BuyCredit = () => {
         Choose the plan
       </h1>
 
-      {/* Stripe Card Element */}
       <div className="max-w-md mx-auto border p-4 rounded mb-6">
         <CardElement className="p-2 border rounded" />
       </div>
@@ -106,7 +126,7 @@ const BuyCredit = () => {
               {item.credits} Credits
             </p>
             <button
-              onClick={() => paymentStripe(item.id)}
+              onClick={() => paymentStripe(item.id, item.credits)}
               className="w-full bg-gray-800 text-white mt-8 text-sm rounded-md py-2.5 min-w-52 disabled:opacity-50"
               disabled={!stripe || !elements || loading}
             >
