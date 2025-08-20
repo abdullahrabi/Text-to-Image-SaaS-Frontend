@@ -46,7 +46,7 @@ const BuyCredit = () => {
       )
 
       if (!data.success) {
-        toast.error(data.message)
+        toast.error(`❌ ${data.message}`)
         setLoading(false)
         return
       }
@@ -54,7 +54,7 @@ const BuyCredit = () => {
       const clientSecret = data.clientSecret
       const cardElement = elements.getElement(CardElement)
       if (!cardElement) {
-        toast.error("Card details not entered")
+        toast.error("⚠️ Card details not entered")
         setLoading(false)
         return
       }
@@ -71,9 +71,10 @@ const BuyCredit = () => {
       })
 
       if (result.error) {
-        toast.error(result.error.message)
+        toast.error(`❌ ${result.error.message}`)
       } else if (result.paymentIntent.status === 'succeeded') {
-         toast.info("We are verifying your payment, please wait. Thank you for your patience ⏳", { autoClose: 5000 })
+        toast.info("💳⏳ We are verifying your payment, please wait...", { autoClose: 5000 })
+
         // Optimized polling: check every 1s, stop as soon as credits are updated
         let attempts = 0
         const interval = setInterval(async () => {
@@ -81,14 +82,14 @@ const BuyCredit = () => {
           const latestCredits = await fetchLatestCredits()
           if (latestCredits > oldCredits || attempts >= 10) {
             clearInterval(interval)
-            toast.success("Payment successful and Credit Added 🎉")
+            toast.success("✅🎉 Payment successful and Credits Added!")
             navigate('/')
           }
         }, 1000)
       }
 
     } catch (error) {
-      toast.error(error.message)
+      toast.error(`❌ ${error.message}`)
     } finally {
       setLoading(false)
     }
