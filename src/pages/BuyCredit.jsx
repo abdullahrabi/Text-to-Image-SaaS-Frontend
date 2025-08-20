@@ -73,6 +73,7 @@ const BuyCredit = () => {
       if (result.error) {
         toast.error(result.error.message)
       } else if (result.paymentIntent.status === 'succeeded') {
+         toast.info("We are verifying your payment, please wait. Thank you for your patience ⏳", { autoClose: 5000 })
         // Optimized polling: check every 1s, stop as soon as credits are updated
         let attempts = 0
         const interval = setInterval(async () => {
