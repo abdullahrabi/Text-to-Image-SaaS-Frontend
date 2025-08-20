@@ -119,7 +119,7 @@ const Login = () => {
 
         {/* ✅ Forgot Password only in Login state */}
         {state === 'Login' && (
-          <p className='text-sm text-blue-600 my-4 cursor-pointer text-center'>
+          <p className='text-sm text-blue-600 mt-3 mb-4 cursor-pointer text-center'>
             Forgot Password?
           </p>
         )}
