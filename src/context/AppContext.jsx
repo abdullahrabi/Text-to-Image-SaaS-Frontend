@@ -26,11 +26,11 @@ const AppContextProvider = (props) => {
         setCredit(data.credits);
         setUser(data.user);
       } else {
-        toast.error(`❌ ${data.message}`);
+        toast.error(`${data.message} ❌`);
       }
     } catch (error) {
       console.error(error);
-      toast.error(`❌ ${error.message}`);
+      toast.error(`${error.message} ❌`);
     }
   };
 
@@ -47,7 +47,7 @@ const AppContextProvider = (props) => {
     setToken('');
     setUser(null);
     setCredit(0);
-    toast.success('✅ Logout successful!');
+    toast.success('Logout successful! ✅');
     navigate('/');
   };
 
@@ -62,17 +62,17 @@ const AppContextProvider = (props) => {
 
       if (data.success) {
         await loadCreditsData(); // Update credits immediately
-        toast.success('✅ Image generated successfully!');
+        toast.success('Image generated successfully! ✅');
         return data.image; // Return the generated image URL
       } else {
-        toast.error(`❌ ${data.message}`);
+        toast.error(`${data.message} ❌`);
         await loadCreditsData(); // Ensure credit updates even on error
         if (data.creditBalance === 0) {
           navigate('/buy');
         }
       }
     } catch (error) {
-      toast.error(`❌ ${error.message}`);
+      toast.error(`${error.message} ❌`);
     }
   };
 

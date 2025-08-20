@@ -24,11 +24,11 @@ const Login = () => {
         if (data.success) {
           setToken(data.token);
           setUser(data.user);
-          toast.success('✅ Login successful!');
+          toast.success('Login successful! ✅');
           localStorage.setItem('token', data.token);
           setShowLogin(false);
         } else {
-          toast.error(`❌ ${data.message}`);
+          toast.error(`${data.message} ❌`);
         }
 
       } else {
@@ -40,19 +40,19 @@ const Login = () => {
         if (data.success) {
           setToken(data.token);
           setUser(data.user);
-          toast.success('✅ Signup successful!');
+          toast.success('Signup successful! ✅');
           localStorage.setItem('token', data.token);
           setShowLogin(false);
         } else {
-          toast.error(`❌ ${data.message}`);
+          toast.error(`${data.message} ❌`);
         }
       }
 
     } catch (error) {
       if (error.response?.data?.message) {
-        toast.error(`❌ ${error.response.data.message}`);
+        toast.error(`${error.response.data.message} ❌`);
       } else {
-        toast.error(`❌ ${error.message}`);
+        toast.error(`${error.message} ❌`);
       }
     }
   };
