@@ -82,11 +82,7 @@ const generateImage = async (prompt) => {
         }
     }, [token]);
 
-     useEffect(() => {
-       if (credit) {
-        
-       }
-    }, [credit]);
+     
     const value = {
         user,setUser,showLogin,setShowLogin, backendUrl,token,setToken, credit,setCredit, loadCreditsData, logout, generateImage
     }
