@@ -7,6 +7,10 @@ import CaptchaModal from "./CaptchaModal";
 const Navbar = () => {
   const navigate = useNavigate();
   const { user, setShowLogin, logout, credit } = useContext(AppContext);
+   const [localCredit, setLocalCredit] = useState(credit);
+    useEffect(() => {
+    setLocalCredit(credit);
+  }, [credit]); // update whenever context credit changes
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [showCaptcha, setShowCaptcha] = useState(false);

@@ -10,6 +10,7 @@ const AppContextProvider = ( props ) => {
     const[showLogin,setShowLogin] = useState(false);
     const [token,setToken] = useState(localStorage.getItem('token'));
     const [credit,setCredit] = useState(false);
+    
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const navigate = useNavigate();
 const loadCreditsData = async () => {
@@ -82,7 +83,9 @@ const generateImage = async (prompt) => {
     }, [token]);
 
      useEffect(() => {
-       console.log("Credits updated:", credit);
+       if (credit) {
+        
+       }
     }, [credit]);
     const value = {
         user,setUser,showLogin,setShowLogin, backendUrl,token,setToken, credit,setCredit, loadCreditsData, logout, generateImage
