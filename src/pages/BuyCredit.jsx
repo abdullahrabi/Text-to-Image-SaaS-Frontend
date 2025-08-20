@@ -8,7 +8,7 @@ import axios from 'axios'
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js'
 
 const BuyCredit = () => {
-  const { user, backendUrl, token, setShowLogin } = useContext(AppContext)
+  const { user, backendUrl, token, setShowLogin, loadCreditsData  } = useContext(AppContext)
   const stripe = useStripe()
   const elements = useElements()
   const navigate = useNavigate()
@@ -61,6 +61,7 @@ const BuyCredit = () => {
         toast.error(result.error.message)
       } else if (result.paymentIntent.status === 'succeeded') {
         toast.success("Payment successful 🎉")
+        await loadCreditsData()
         navigate('/result') // credits update via webhook
       }
     } catch (error) {
