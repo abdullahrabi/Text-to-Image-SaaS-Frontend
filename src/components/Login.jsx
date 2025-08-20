@@ -75,7 +75,7 @@ const Login = () => {
         className='relative bg-white p-10 rounded-xl text-slate-500 w-96'
       >
         <h1 className='text-center text-2xl text-neutral-700 font-medium'>{state}</h1>
-        <p className='text-sm mt-3'>
+        <p className='text-sm mt-3 text-center'>
           Welcome! {state === 'Login' ? 'Back!' : ''} Please {state === 'Login' ? 'login' : 'signup'} to continue
         </p>
 
