@@ -24,11 +24,11 @@ const Login = () => {
         if (data.success) {
           setToken(data.token);
           setUser(data.user);
-          toast.success('Login successful! ✅');
+          toast.success('✅ Login successful!');
           localStorage.setItem('token', data.token);
           setShowLogin(false);
         } else {
-          toast.error(`${data.message} ❌`);
+          toast.error(`❌ ${data.message}`);
         }
 
       } else {
@@ -40,19 +40,19 @@ const Login = () => {
         if (data.success) {
           setToken(data.token);
           setUser(data.user);
-          toast.success('Signup successful! ✅');
+          toast.success('✅ Signup successful!');
           localStorage.setItem('token', data.token);
           setShowLogin(false);
         } else {
-          toast.error(`${data.message} ❌`);
+          toast.error(`❌ ${data.message}`);
         }
       }
 
     } catch (error) {
       if (error.response?.data?.message) {
-        toast.error(`${error.response.data.message} ❌`);
+        toast.error(`❌ ${error.response.data.message}`);
       } else {
-        toast.error(`${error.message} ❌`);
+        toast.error(`❌ ${error.message}`);
       }
     }
   };
@@ -72,83 +72,50 @@ const Login = () => {
         transition={{ duration: 0.3 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className='relative bg-white p-10 rounded-xl text-slate-500 w-96'
+        className='relative bg-white p-10 rounded-xl text-slate-500'
       >
         <h1 className='text-center text-2xl text-neutral-700 font-medium'>{state}</h1>
-        <p className='text-sm mt-3 text-center'>
-          Welcome! {state === 'Login' ? 'Back!' : ''} Please {state === 'Login' ? 'login' : 'signup'} to continue
-        </p>
+        <p className='text-sm mt-3'>Welcome! {state === 'Login' ? 'Back!' : ''} Please {state === 'Login' ? 'login' : 'signup'} to continue</p>
 
-        {/* Full Name only in Signup */}
         {state !== 'Login' &&
-          <div className='border px-4 py-2 flex items-center gap-2 rounded-full mt-5'>
-            <img src={assets.user_icon} alt="" className="w-4 h-4" />
-            <input
-              onChange={e => setName(e.target.value)}
-              value={name}
-              className='outline-none text-sm flex-1 bg-transparent'
-              type="text"
-              placeholder='Full Name'
-              required
-            />
+          <div className='border px-6 py-2 flex items-center gap-2 rounded-full mt-5'>
+            <img src={assets.user_icon} alt="" />
+            <input onChange={e => setName(e.target.value)} value={name} className='outline-none text-sm' type="text" placeholder='Full Name' required />
           </div>
         }
 
-        {/* Email */}
-        <div className='border px-4 py-2 flex items-center gap-2 rounded-full mt-4'>
-          <img src={assets.email_icon} alt="" className="w-4 h-4" />
-          <input
-            onChange={e => setEmail(e.target.value)}
-            value={email}
-            className='outline-none text-sm flex-1 bg-transparent'
-            type="email"
-            placeholder='Email id'
-            required
-          />
+        <div className='border px-6 py-2 flex items-center gap-2 rounded-full mt-4'>
+          <img src={assets.email_icon} alt="" />
+          <input onChange={e => setEmail(e.target.value)} value={email} className='outline-none text-sm' type="email" placeholder='Email id' required />
         </div>
 
-        {/* Password */}
-        <div className='border px-4 py-2 flex items-center gap-2 rounded-full mt-4'>
-          <img src={assets.lock_icon} alt="" className="w-4 h-4" />
-          <input
-            onChange={e => setPassword(e.target.value)}
-            value={password}
-            className='outline-none text-sm flex-1 bg-transparent'
-            type="password"
-            placeholder='Password'
-            required
-          />
+        <div className='border px-6 py-2 flex items-center gap-2 rounded-full mt-4'>
+          <img src={assets.lock_icon} alt="" />
+          <input onChange={e => setPassword(e.target.value)} value={password} className='outline-none text-sm' type="password" placeholder='Password' required />
         </div>
 
-        {/* ✅ Forgot Password only in Login state */}
-        {state === 'Login' && (
-          <p className='text-sm text-blue-600 mt-3 mb-4 cursor-pointer text-center'>
-            Forgot Password?
+        {/* Conditional text */}
+        {state === 'Login' ? (
+          <p className='text-sm text-blue-600 my-4 cursor-pointer text-center'>Forgot Password?</p>
+        ) : (
+          <p className='text-sm text-gray-500 my-4 text-center'>
+            By signing up, you agree to our <span className="text-blue-600 cursor-pointer">Terms & Privacy Policy</span>
           </p>
         )}
 
-        <button className='bg-blue-600 w-full text-white py-2 rounded-full mt-3'>
-          {state === 'Login' ? 'Login' : 'Create Account'}
-        </button>
+        <button className='bg-blue-600 w-full text-white py-2 rounded-full'>{state === 'Login' ? 'Login' : 'Create Account'}</button>
 
-        {state === 'Login' ? (
-          <p className='mt-4 text-center'>
-            Don't have an account?
+        {state === 'Login' ?
+          <p className='mt-4 text-center'>Don't have an account?
             <span className='text-blue-600 cursor-pointer' onClick={() => setState('Sign Up')}> Sign Up</span>
           </p>
-        ) : (
-          <p className='mt-4 text-center'>
-            Already have an account?
+          :
+          <p className='mt-4 text-center'>Already have an account?
             <span className='text-blue-600 cursor-pointer' onClick={() => setState('Login')}> Login</span>
           </p>
-        )}
+        }
 
-        <img
-          onClick={() => setShowLogin(false)}
-          className='absolute top-5 right-5 cursor-pointer w-4 h-4'
-          src={assets.cross_icon}
-          alt="close"
-        />
+        <img onClick={() => setShowLogin(false)} className='absolute top-5 right-5 cursor-pointer' src={assets.cross_icon} alt="" />
       </motion.form>
     </div>
   )
