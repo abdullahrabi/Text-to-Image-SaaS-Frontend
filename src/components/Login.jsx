@@ -1,154 +1,122 @@
-import React, { useEffect, useState, useContext } from 'react'
-import { assets } from '../assets/assets'
-import { AppContext } from '../context/AppContext';
-import { motion } from 'motion/react';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
-const Login = () => {
-  const [state, setState] = useState('Login')
-  const { setShowLogin, backendUrl, setToken, setUser } = useContext(AppContext);
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const LoginSignup = () => {
+  const [isLogin, setIsLogin] = useState(true);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
-  const onSubmitHandler = async (e) => {
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const toggleForm = () => {
+    setIsLogin(!isLogin);
+    setFormData({ email: "", password: "", confirmPassword: "" }); // reset fields
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      if (state === 'Login') {
-        const { data } = await axios.post(
-          backendUrl + '/api/user/login',
-          { email, password }
-        );
-
-        if (data.success) {
-          setToken(data.token);
-          setUser(data.user);
-          toast.success('Login successful! ✅');
-          localStorage.setItem('token', data.token);
-          setShowLogin(false);
-        } else {
-          toast.error(`${data.message} ❌`);
-        }
-
-      } else {
-        const { data } = await axios.post(
-          backendUrl + '/api/user/register',
-          { name, email, password }
-        );
-
-        if (data.success) {
-          setToken(data.token);
-          setUser(data.user);
-          toast.success('Signup successful! ✅');
-          localStorage.setItem('token', data.token);
-          setShowLogin(false);
-        } else {
-          toast.error(`${data.message} ❌`);
-        }
+    if (isLogin) {
+      toast.success("Login successful!");
+      navigate("/");
+    } else {
+      if (formData.password !== formData.confirmPassword) {
+        toast.error("Passwords do not match");
+        return;
       }
-
-    } catch (error) {
-      if (error.response?.data?.message) {
-        toast.error(`${error.response.data.message} ❌`);
-      } else {
-        toast.error(`${error.message} ❌`);
-      }
+      toast.success("Signup successful!");
+      navigate("/");
     }
   };
 
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = 'unset';
-    }
-  }, [])
-
   return (
-    <div className='fixed top-0 left-0 right-0 bottom-0 z-10 backdrop-blur-sm bg-black/30 flex justify-center items-center'>
-      <motion.form
-        onSubmit={onSubmitHandler}
-        initial={{ opacity: 0.2, y: 50 }}
-        transition={{ duration: 0.3 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className='relative bg-white p-10 rounded-xl text-slate-500'
+    <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <motion.div
+        key={isLogin ? "login" : "signup"}
+        initial={{ opacity: 0, x: isLogin ? -50 : 50 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: isLogin ? 50 : -50 }}
+        transition={{ duration: 0.5 }}
+        className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md"
       >
-        <h1 className='text-center text-2xl text-neutral-700 font-medium'>{state}</h1>
-        <p className='text-sm mt-3'>
-          Welcome! {state === 'Login' ? 'Back!' : ''} Please {state === 'Login' ? 'login' : 'signup'} to continue
-        </p>
+        <h2 className="text-2xl font-bold text-center mb-6">
+          {isLogin ? "Login" : "Sign Up"}
+        </h2>
 
-        {state !== 'Login' &&
-          <div className='border px-6 py-2 flex items-center gap-2 rounded-full mt-5'>
-            <img src={assets.user_icon} alt="" />
-            <input
-              onChange={e => setName(e.target.value)}
-              value={name}
-              className='outline-none text-sm'
-              type="text"
-              placeholder='Full Name'
-              required
-            />
-          </div>
-        }
-
-        <div className='border px-6 py-2 flex items-center gap-2 rounded-full mt-4'>
-          <img src={assets.email_icon} alt="" />
+        <form onSubmit={handleSubmit} className="space-y-4">
           <input
-            onChange={e => setEmail(e.target.value)}
-            value={email}
-            className='outline-none text-sm'
             type="email"
-            placeholder='Email id'
+            name="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
             required
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
           />
-        </div>
 
-        <div className='border px-6 py-2 flex items-center gap-2 rounded-full mt-4'>
-          <img src={assets.lock_icon} alt="" />
           <input
-            onChange={e => setPassword(e.target.value)}
-            value={password}
-            className='outline-none text-sm'
             type="password"
-            placeholder='Password'
+            name="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
             required
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
           />
-        </div>
 
-        {/* ✅ Forgot Password only in Login state */}
-        {state === 'Login' && (
-          <p className='text-sm text-blue-600 my-4 cursor-pointer text-center'>
-            Forgot Password?
-          </p>
-        )}
+          {!isLogin && (
+            <input
+              type="password"
+              name="confirmPassword"
+              placeholder="Confirm Password"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+              className="w-full p-3 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+            />
+          )}
 
-        <button className='bg-blue-600 w-full text-white py-2 rounded-full'>
-          {state === 'Login' ? 'Login' : 'Create Account'}
-        </button>
+          {/* Forgot password option - only visible in Login */}
+          {isLogin && (
+            <div className="text-right">
+              <button
+                type="button"
+                onClick={() => toast.info("Redirecting to Forgot Password...")}
+                className="text-sm text-blue-500 hover:underline"
+              >
+                Forgot Password?
+              </button>
+            </div>
+          )}
 
-        {state === 'Login' ? (
-          <p className='mt-4 text-center'>
-            Don't have an account?
-            <span className='text-blue-600 cursor-pointer' onClick={() => setState('Sign Up')}> Sign Up</span>
-          </p>
-        ) : (
-          <p className='mt-4 text-center'>
-            Already have an account?
-            <span className='text-blue-600 cursor-pointer' onClick={() => setState('Login')}> Login</span>
-          </p>
-        )}
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition"
+          >
+            {isLogin ? "Login" : "Sign Up"}
+          </button>
+        </form>
 
-        <img
-          onClick={() => setShowLogin(false)}
-          className='absolute top-5 right-5 cursor-pointer'
-          src={assets.cross_icon}
-          alt=""
-        />
-      </motion.form>
+        <p className="text-center mt-4 text-gray-600">
+          {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+          <button
+            onClick={toggleForm}
+            className="text-blue-500 font-medium hover:underline"
+          >
+            {isLogin ? "Sign Up" : "Login"}
+          </button>
+        </p>
+      </motion.div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default LoginSignup;
