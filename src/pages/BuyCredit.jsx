@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { assets, plans } from '../assets/assets'
 import { AppContext } from '../context/AppContext'
 import { motion } from 'motion/react'
@@ -13,6 +13,8 @@ const BuyCredit = () => {
   const elements = useElements()
   const navigate = useNavigate()
 
+  const [loading, setLoading] = useState(false)
+
   const paymentStripe = async (planId) => {
     try {
       if (!user) {
@@ -20,7 +22,9 @@ const BuyCredit = () => {
         return
       }
 
-      // Call backend to create PaymentIntent
+      setLoading(true)
+
+      // Step 1: Create PaymentIntent via backend
       const { data } = await axios.post(
         backendUrl + '/api/user/pay-stripe',
         { planId },
@@ -29,12 +33,20 @@ const BuyCredit = () => {
 
       if (!data.success) {
         toast.error(data.message)
+        setLoading(false)
         return
       }
 
       const clientSecret = data.clientSecret
       const cardElement = elements.getElement(CardElement)
 
+      if (!cardElement) {
+        toast.error("Card details not entered")
+        setLoading(false)
+        return
+      }
+
+      // Step 2: Confirm payment with Stripe
       const result = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           card: cardElement,
@@ -49,10 +61,12 @@ const BuyCredit = () => {
         toast.error(result.error.message)
       } else if (result.paymentIntent.status === 'succeeded') {
         toast.success("Payment successful 🎉")
-        navigate('/dashboard') // or reload credits
+        navigate('/dashboard') // credits update via webhook
       }
     } catch (error) {
       toast.error(error.message)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -79,8 +93,8 @@ const BuyCredit = () => {
       <div className="flex flex-wrap justify-center gap-6 text-left">
         {plans.map((item, index) => (
           <div
-            className="bg-white drop-shadow-sm border rounded-lg py-12 px-8 text-gray-600 hover:scale-105 transition-all duration-500"
             key={index}
+            className="bg-white drop-shadow-sm border rounded-lg py-12 px-8 text-gray-600 hover:scale-105 transition-all duration-500"
           >
             <img width={40} src={assets.logo_icon} alt="" />
             <p className="mt-3 mb-1 font-semibold">{item.id}</p>
@@ -91,10 +105,10 @@ const BuyCredit = () => {
             </p>
             <button
               onClick={() => paymentStripe(item.id)}
-              className="w-full bg-gray-800 text-white mt-8 text-sm rounded-md py-2.5 min-w-52"
-              disabled={!stripe || !elements}
+              className="w-full bg-gray-800 text-white mt-8 text-sm rounded-md py-2.5 min-w-52 disabled:opacity-50"
+              disabled={!stripe || !elements || loading}
             >
-              {user ? "Purchase" : "Get Started"}
+              {loading ? "Processing..." : user ? "Purchase" : "Get Started"}
             </button>
           </div>
         ))}
