@@ -60,9 +60,9 @@ const BuyCredit = () => {
       if (result.error) {
         toast.error(result.error.message)
       } else if (result.paymentIntent.status === 'succeeded') {
-        toast.success("Payment successful 🎉")
-        await loadCreditsData()
-        navigate('/result') // credits update via webhook
+        loadCreditsData();
+        navigate('/') 
+        toast.success("Payment successful and Credit Added 🎉")
       }
     } catch (error) {
       toast.error(error.message)
