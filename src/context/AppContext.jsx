@@ -26,6 +26,7 @@ const loadCreditsData = async () => {
         if (data.success) {
             setCredit(data.credits);
             setUser(data.user);
+           
         } else {
             toast.error(data.message + '😢');
         }
@@ -79,7 +80,10 @@ const generateImage = async (prompt) => {
             loadCreditsData();
         }
     }, [token]);
-    
+
+     useEffect(() => {
+       console.log("Credits updated:", credit);
+    }, [credit]);
     const value = {
         user,setUser,showLogin,setShowLogin, backendUrl,token,setToken, credit,setCredit, loadCreditsData, logout, generateImage
     }
