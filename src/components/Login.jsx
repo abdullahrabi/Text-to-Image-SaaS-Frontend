@@ -94,15 +94,7 @@ const Login = () => {
           <input onChange={e => setPassword(e.target.value)} value={password} className='outline-none text-sm' type="password" placeholder='Password' required />
         </div>
 
-        {/* Conditional text */}
-        {state === 'Login' ? (
-          <p className='text-sm text-blue-600 my-4 cursor-pointer text-center'>Forgot Password?</p>
-        ) : (
-          <p className='text-sm text-gray-500 my-4 text-center'>
-            By signing up, you agree to our <span className="text-blue-600 cursor-pointer">Terms & Privacy Policy</span>
-          </p>
-        )}
-
+        <p className='text-sm text-blue-600 my-4 cursor-pointer text-center'>Forgot Password?</p>
         <button className='bg-blue-600 w-full text-white py-2 rounded-full'>{state === 'Login' ? 'Login' : 'Create Account'}</button>
 
         {state === 'Login' ?
